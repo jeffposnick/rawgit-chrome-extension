@@ -1,0 +1,10 @@
+{
+  "appName": {
+    "message": "RawGit Chrome Extension",
+    "description": "The name of the application"
+  },
+  "appDescription": {
+    "message": "Adds a \"RawGit\" button next to the \"Raw\" button in the GitHub web interface.",
+    "description": "The description of the application"
+  }
+}
