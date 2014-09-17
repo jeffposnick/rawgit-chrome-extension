@@ -50,7 +50,3 @@ function massageUrlString(urlString) {
 
   return url.href;
 }
-
-chrome.runtime.onMessage.addListener(function() {
-  console.log('onMessage', arguments);
-});
