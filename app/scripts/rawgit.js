@@ -6,12 +6,14 @@ var BUTTON_ID = 'rawgit-button';
 // If there are multiple elements on the GitHub page, only the first will be found.
 // (I don't know if there are GitHub pages with multiple 'Raw' buttons.)
 // On github.com, #raw-url matches, and on gist.github.com, .raw-url matches.
-var rawElement = document.querySelector('#raw-url') || document.querySelector('.raw-url');
+var existingElement = document.querySelector('#raw-url') ||
+                 document.querySelector('.raw-url') ||
+                 document.querySelector('[aria-label="View the whole file"]');
 // Also ensure that we don't add BUTTON_ID twice...
-if (rawElement && document.getElementById(BUTTON_ID) == null) {
-  var rawGitElement = createRawGitButton(rawElement);
+if (existingElement && document.getElementById(BUTTON_ID) == null) {
+  var rawGitElement = createRawGitButton(existingElement);
   // Put the 'RawGit' button right before the existing 'Raw' button.
-  rawElement.parentElement.insertBefore(rawGitElement, rawElement);
+  existingElement.parentElement.insertBefore(rawGitElement, existingElement);
 }
 
 function createRawGitButton(rawElement) {
@@ -41,8 +43,9 @@ function massageUrlString(urlString) {
   // raw.githubusercontent.com with the 'raw/' removed. The actual URL we want has
   // the 'raw/' removed.
   if (url.host === 'github.com') {
-    // This will only replace the first instance of 'raw/'.
-    url.pathname = url.pathname.replace('raw/', '');
+    // This will only replace the first instance of each.
+    url.pathname = url.pathname.replace('/raw/', '/');
+    url.pathname = url.pathname.replace('/blob/', '/');
   }
 
   // The scheme (https: or http:) will be retained.
