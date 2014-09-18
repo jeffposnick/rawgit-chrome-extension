@@ -1,29 +1,34 @@
 'use strict';
 
-var BUTTON_ID = 'rawgit-button';
+var RAWGIT_BUTTON_CLASS = 'rawgitbutton';
 
-// Find an HTML element corresponding to the 'Raw' button (if it exists).
-// If there are multiple elements on the GitHub page, only the first will be found.
-// (I don't know if there are GitHub pages with multiple 'Raw' buttons.)
-// On github.com, #raw-url matches, and on gist.github.com, .raw-url matches.
-var existingElement = document.querySelector('#raw-url') ||
-                 document.querySelector('.raw-url') ||
-                 document.querySelector('[aria-label="View the whole file"]');
-// Also ensure that we don't add BUTTON_ID twice...
-if (existingElement && document.getElementById(BUTTON_ID) == null) {
-  var rawGitElement = createRawGitButton(existingElement);
-  // Put the 'RawGit' button right before the existing 'Raw' button.
-  existingElement.parentElement.insertBefore(rawGitElement, existingElement);
-}
+var matchingElements = [];
+// Find all HTML elements corresponding to the 'Raw' and 'View' buttons (if they exists).
+// There's no consistent way to identify them, so use a combination of selectors.
+['#raw-url', '.raw-url', '[aria-label="View the whole file"]'].forEach(function(selector) {
+  var elements = document.querySelectorAll(selector);
+  for (var i = 0; i < elements.length; i++) {
+    matchingElements.push(elements[i]);
+  }
+});
+matchingElements.forEach(function(matchingElement) {
+  // Only add the button once. Due to the way GitHub uses pjax and pushHistory(),
+  // it's easy to add the button multiple times, so let's explicitly check.
+  if (matchingElement.parentElement.querySelector('.' + RAWGIT_BUTTON_CLASS) == null) {
+    var rawGitElement = createRawGitButton(matchingElement);
+    // Put the 'RawGit' button right before the existing 'Raw' button.
+    matchingElement.parentElement.insertBefore(rawGitElement, matchingElement);
+  }
+});
 
-function createRawGitButton(rawElement) {
+function createRawGitButton(matchingElement) {
   var rawGitElement = document.createElement('a');
   // This seems to be enough to get the button to look like the standard GitHub buttons.
   rawGitElement.classList.add('minibutton');
-  rawGitElement.id = BUTTON_ID;
+  rawGitElement.classList.add(RAWGIT_BUTTON_CLASS);
   rawGitElement.textContent = 'RawGit';
   rawGitElement.setAttribute('aria-label', 'View on RawGit');
-  rawGitElement.href = massageUrlString(rawElement.href);
+  rawGitElement.href = massageUrlString(matchingElement.href);
 
   // There's some magic going on with the click handlers on GitHub buttons,
   // so opt-out of the default onclick behavior.
