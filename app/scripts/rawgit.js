@@ -26,6 +26,8 @@ function createRawGitButton(matchingElement) {
   // This seems to be enough to get the button to look like the standard GitHub buttons.
   rawGitElement.classList.add('minibutton');
   rawGitElement.classList.add(RAWGIT_BUTTON_CLASS);
+  rawGitElement.classList.add('btn');
+  rawGitElement.classList.add('btn-sm');
   rawGitElement.textContent = 'RawGit';
   rawGitElement.setAttribute('aria-label', 'View on RawGit');
   rawGitElement.href = massageUrlString(matchingElement.href);
